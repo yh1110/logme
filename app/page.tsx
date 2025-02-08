@@ -7,6 +7,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
+
       <nav className="bg-[#FFB84C] p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">

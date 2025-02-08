@@ -22,7 +22,9 @@ const diaryData = {
   ],
 };
 
-export default async function DiaryPage() {
+export default async function DiaryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  console.log(slug);
   //データフェッチ
   return <ClientDairy diaryData={diaryData} />;
 }

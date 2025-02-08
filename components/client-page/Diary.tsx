@@ -6,19 +6,19 @@ import { ChevronDown } from "lucide-react";
 import Header from "@/components/app/Header";
 import UserBar from "@/components/app/UserBar";
 
-export default function ClientDairy({ diaryData }) {
+export default function ClientDiary({ diaryData }) {
   const [selectedEntry, setSelectedEntry] = useState(diaryData["2024-03"][0]);
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <Header />
+      {/* Header & ユーザーバー */}
+      <Header diaryData={diaryData} />
       <UserBar />
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6 flex gap-6">
-        {/* Sidebar Navigation */}
-        <div className="w-1/3 bg-white rounded-lg shadow-sm">
+      {/* メインコンテンツ */}
+      <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-6">
+        {/* Sidebar Navigation（この位置はそのまま） */}
+        <div className="w-full md:w-1/3 bg-white rounded-lg shadow-sm">
           <ScrollArea className="h-[calc(100vh-8rem)]">
             {Object.entries(diaryData).map(([month, entries]) => (
               <div key={month} className="p-4">
@@ -48,7 +48,7 @@ export default function ClientDairy({ diaryData }) {
         </div>
 
         {/* Main Diary Content */}
-        <div className="w-2/3 bg-white rounded-lg shadow-sm p-6">
+        <div className="w-full md:w-2/3 bg-white rounded-lg shadow-sm p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900">{selectedEntry.title}</h1>
             <p className="text-gray-500">{selectedEntry.date}</p>
