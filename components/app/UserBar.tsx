@@ -124,7 +124,7 @@ const UserBar = () => {
                 {/* Submit ボタン：フォーム送信 */}
                 <DialogClose asChild>
                   <Button type="submit" className="my-4 sm:my-0 hover:bg-primary-buttonHover">
-                    送信
+                    追加する
                   </Button>
                 </DialogClose>
                 {/* 閉じるボタン */}

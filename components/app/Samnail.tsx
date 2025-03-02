@@ -1,4 +1,3 @@
-// app/diary/components/MonthAccordion.tsx
 "use client";
 
 import { useState } from "react";

@@ -5,8 +5,7 @@ import UserBar from "@/components/app/UserBar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React from "react";
 
-// ※実際のデータはAPIやCMSから取得してもOKです。
-// 今回は例として静的な配列を用意しています。
+// ダミーデータ
 const diaryData = {
   "2024-03": [
     {
@@ -30,7 +29,6 @@ const diaryData = {
 
 //ログインしているユーザーの情報をもとにAPI叩く
 //セッションから現在連携しているSNSの情報を取得
-//
 
 export default async function BlogLayout({ children }: { children: React.ReactNode }) {
   return (

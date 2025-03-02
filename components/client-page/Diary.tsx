@@ -18,7 +18,8 @@ export default function ClientDiary({ diaryData }) {
       {/* メインコンテンツ */}
       <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-6">
         {/* Sidebar Navigation（この位置はそのまま） */}
-        <div className="w-full md:w-1/3 bg-white rounded-lg shadow-sm">
+        {/* モバイル版では非表示 */}
+        <div className="w-full md:w-1/3 bg-white rounded-lg shadow-sm hidden md:block">
           <ScrollArea className="h-[calc(100vh-8rem)]">
             {Object.entries(diaryData).map(([month, entries]) => (
               <div key={month} className="p-4">
@@ -48,6 +49,7 @@ export default function ClientDiary({ diaryData }) {
         </div>
 
         {/* Main Diary Content */}
+        {/* デフォルト表示用 */}
         <div className="w-full md:w-2/3 bg-white rounded-lg shadow-sm p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900">{selectedEntry.title}</h1>
