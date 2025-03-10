@@ -1,13 +1,32 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Mail, Lock } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 export default function Signin() {
+  const router = useRouter();
+  // Googleログイン
+  const handleLogin = async () => {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL,
+      },
+    });
+    if (error) {
+      // #TODO エラー処理
+      console.error("Error logging in:", error);
+    } else {
+      router.push("/diary");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -61,7 +80,7 @@ export default function Signin() {
           </div>
 
           <div className="grid gap-4">
-            <Button variant="outline" className="rounded-full py-6 text-lg">
+            <Button variant="outline" className="rounded-full py-6 text-lg" onClick={handleLogin}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="200"
