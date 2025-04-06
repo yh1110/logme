@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Link from "next/link";
 import { Mail, Lock } from "lucide-react";
 import Image from "next/image";
-import { googleSignin } from "@/utils/actions/signinActions";
+import { googleSignin } from "@/lib/actions/signinActions";
 
 export default async function Signin() {
   // Googleログイン

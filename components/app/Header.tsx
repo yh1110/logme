@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"; // shadcn/ui の Sheet コンポーネント群
 import { ScrollArea } from "../ui/scroll-area";
 import { MobileSamnail } from "./Samnail";
+import { SNSDialog } from "./InputDialog";
 
 export default function Header({ diaryData }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [samnailOpen, setSamnailOpen] = useState(false);
+  const [snsOpen, setSnsOpen] = useState(false);
 
   return (
     <>
@@ -26,7 +28,7 @@ export default function Header({ diaryData }) {
             </button>
           </div>
 
-          {/* ロゴ & SNS切替（PC用は中央、モバイルはロゴ側にコンパクト表示） */}
+          {/* ロゴ  */}
           <div className="flex items-center space-x-4">
             <div className="text-white font-bold text-2xl">
               <Image src="/img/logo_black.png" alt="Logo" width={50} height={50} />
@@ -54,9 +56,9 @@ export default function Header({ diaryData }) {
               <span>ホーム</span>
             </Link>
 
-            {/* SNS連携 */}
+            {/* SNS選択 */}
             <div className="">
-              <button className=" flex space-x-2 items-center">
+              <button className=" flex space-x-2 items-center" onClick={() => setSnsOpen(true)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="25"
@@ -68,7 +70,7 @@ export default function Header({ diaryData }) {
                     d="m271 392l173 97c25-29 62-47 104-47c76 0 137 62 137 138s-61 137-137 137c-77 0-138-61-138-137c0-8 1-17 2-25l-178-99c-25 25-59 40-97 40C61 496 0 435 0 359s61-137 137-137c39 0 75 16 100 42l177-96c-2-10-4-20-4-30C410 62 471 0 548 0c76 0 137 62 137 138s-61 137-137 137c-39 0-74-15-99-42l-178 95c2 10 3 21 3 31c0 11-1 23-3 33z"
                   />
                 </svg>
-                <span className="">SNS連携</span>
+                <span className="">SNS選択</span>
               </button>
             </div>
 
@@ -127,7 +129,7 @@ export default function Header({ diaryData }) {
         </div>
       </header>
 
-      {/* メニュードロワー */}
+      {/* モバイル用メニュードロワー */}
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         {/* ドロワーを開くトリガー */}
         {/* SheetContent でドロワーの内容を定義。side="right" で右側から表示 */}
@@ -167,9 +169,9 @@ export default function Header({ diaryData }) {
               </Link>
             </SheetClose>
 
-            {/* SNS連携 */}
+            {/* SNS選択 */}
             <SheetClose asChild>
-              <button className="flex space-x-2 items-center">
+              <button className="flex space-x-2 items-center" onClick={() => setSnsOpen(true)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="25"
@@ -181,7 +183,7 @@ export default function Header({ diaryData }) {
                     d="m271 392l173 97c25-29 62-47 104-47c76 0 137 62 137 138s-61 137-137 137c-77 0-138-61-138-137c0-8 1-17 2-25l-178-99c-25 25-59 40-97 40C61 496 0 435 0 359s61-137 137-137c39 0 75 16 100 42l177-96c-2-10-4-20-4-30C410 62 471 0 548 0c76 0 137 62 137 138s-61 137-137 137c-39 0-74-15-99-42l-178 95c2 10 3 21 3 31c0 11-1 23-3 33z"
                   />
                 </svg>
-                <span className="">SNS連携</span>
+                <span className="">SNS選択</span>
               </button>
             </SheetClose>
             {/* AI分析 */}
@@ -225,8 +227,6 @@ export default function Header({ diaryData }) {
               </Link>
             </SheetClose>
           </nav>
-
-          {/* 閉じるボタン。SheetClose を使うとクリックで自動的にドロワーが閉じられます */}
         </SheetContent>
       </Sheet>
 
@@ -252,7 +252,8 @@ export default function Header({ diaryData }) {
         </SheetContent>
       </Sheet>
 
-      {/* SNS連携ダイアログ */}
+      {/* SNS選択ダイアログ */}
+      <SNSDialog open={snsOpen} setOpen={setSnsOpen} />
     </>
   );
 }
