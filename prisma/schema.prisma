@@ -1,14 +1,54 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model posts {
+  post_id       String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  samnail_id    String?        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  updated_at    DateTime?      @db.Timestamp(6)
+  created_at    DateTime       @db.Timestamp(6)
+  post_contents Json?          @db.Json
+  posts_samnail posts_samnail? @relation(fields: [samnail_id], references: [samnail_id], onDelete: Cascade)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model posts_samnail {
+  samnail_id   String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at   DateTime      @db.Timestamp(6)
+  account_id   String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  samnail_name String?
+  updated_at   DateTime?     @default(now()) @db.Timestamp(6)
+  posts        posts[]
+  sns_accounts sns_accounts? @relation(fields: [account_id], references: [account_id], onDelete: Cascade)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model sns_accounts {
+  account_id    String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String          @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sns_id        String?
+  access_token  String?
+  email         String?
+  password      String?
+  updated_at    DateTime        @default(now()) @db.Timestamp(6)
+  created_at    DateTime        @db.Timestamp(6)
+  posts_samnail posts_samnail[]
+  users         users           @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users {
+  user_id      String         @id(map: "Users_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at   DateTime       @db.Timestamp(6)
+  updated_at   DateTime       @default(now()) @db.Timestamp(6)
+  user_name    String?
+  avatar_url   String?
+  sns_accounts sns_accounts[]
 }

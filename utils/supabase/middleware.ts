@@ -31,6 +31,8 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log(user?.id);
+
   const isAuth = !!user;
 
   console.log("isAuth", isAuth);
