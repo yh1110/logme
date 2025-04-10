@@ -2,7 +2,6 @@
 import { Button } from "../ui/button";
 import {
   Dialog,
-  DialogBack,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -12,40 +11,50 @@ import {
   DialogPortal,
   DialogTitle,
 } from "../ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useForm, Controller, Form } from "react-hook-form";
-import { useActionState, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useActionState, useState, useTransition } from "react";
 import { addAccount } from "@/lib/actions/yay/addAccount";
-import { getPost } from "@/lib/actions/yay/getPost";
 import Image from "next/image";
-import yayicon from "../../public/img/yay.png";
 import { motion, AnimatePresence } from "framer-motion";
 
 // SNSアカウント連携
-export function AccountDialog() {
+export function AccountDialog({ onSuccess }: { onSuccess: () => void }) {
   type FormData = {
     email: string;
     password: string;
   };
-  const { register, control } = useForm<FormData>({});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<FormData>({});
 
   const [state, formAction, isPending] = useActionState(addAccount, null);
+  const [isTransPending, startTransition] = useTransition();
+
+  const onSubmit = (data: FormData) => {
+    startTransition(() => {
+      formAction(data);
+      if (!isPending && !isTransPending) {
+        onSuccess(); // 処理完了後にダイアログを閉じる
+      }
+    });
+  };
+
   return (
-    <Form control={control} onSubmit={({ formData }) => formAction(formData)} className="h-64">
+    <form onSubmit={handleSubmit(onSubmit)} className="h-64">
       <div className="md:grid gap-4 py-4 space-y-6 mb-4">
         {/* メールアドレス */}
         <div className="md:grid md:grid-cols-4 items-center gap-4">
           <Label htmlFor="name" className="md:text-right">
             メールアドレス
-            {/* <span className="text-muted-foreground">（またはID）</span> */}
           </Label>
           <Input
             id="email"
             className="col-span-3"
             autoFocus={false}
-            // register でフォーム入力を登録（必須項目として指定）
             {...register("email", { required: "emailは必須です" })}
           />
         </div>
@@ -67,13 +76,17 @@ export function AccountDialog() {
 
       <DialogFooter>
         {/* Submit ボタン：フォーム送信 */}
-        <DialogClose asChild>
-          <Button type="submit" className="my-4 sm:my-0 hover:bg-primary-buttonHover">
-            送信
-          </Button>
-        </DialogClose>
+        {/* <DialogClose asChild> */}
+        <Button
+          type="submit"
+          className="my-4 sm:my-0 hover:bg-primary-buttonHover"
+          disabled={!isValid || isPending || isTransPending}
+        >
+          {isPending || isTransPending ? "送信中..." : "追加する"}
+        </Button>
+        {/* </DialogClose> */}
       </DialogFooter>
-    </Form>
+    </form>
   );
 }
 
@@ -82,9 +95,9 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
   const [mode, setMode] = useState<"select" | "yay-login">("select");
   const [initial, setInitial] = useState(true);
   const variants = {
-    enter: { x: 100, opacity: 0 },
+    enter: { x: 150, opacity: 0 },
     center: { x: 0, opacity: 1 },
-    exit: { x: -100, opacity: 0 },
+    exit: { x: -150, opacity: 0 },
   };
   return (
     <Dialog
@@ -114,7 +127,7 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                 animate={initial ? "center" : "center"}
                 exit={initial ? "exit" : "exit"}
                 variants={variants}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.25 }}
                 className="space-y-4"
               >
                 <DialogHeader>
@@ -125,8 +138,12 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                 <div className="p-4 mb-4 h-64">
                   <div className="space-y-6 items-center justify-center h-full">
                     {/* x(twitter)連携 */}
-                    <div className="flex items-center justify-center">
-                      <Button variant="outline" className="rounded-full py-6 text-lg px-16 w-3/5">
+                    <div className="flex flex-col items-center justify-center">
+                      <Button
+                        variant="outline"
+                        className="rounded-full py-6 text-lg px-16 w-3/5"
+                        disabled
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="200"
@@ -144,7 +161,11 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
 
                     {/* facebook連携 */}
                     <div className="flex items-center justify-center">
-                      <Button variant="outline" className="rounded-full py-6 text-lg px-16 w-3/5">
+                      <Button
+                        variant="outline"
+                        className="rounded-full py-6 text-lg px-16 w-3/5"
+                        disabled
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="30"
@@ -190,7 +211,7 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                 animate={initial ? "center" : "center"}
                 exit={initial ? "enter" : "enter"}
                 variants={variants}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.25 }}
                 className="space-y-4"
               >
                 <DialogHeader>
@@ -201,7 +222,13 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                 </DialogHeader>
 
                 {/* 入力画面 */}
-                <AccountDialog />
+                <AccountDialog
+                  onSuccess={() => {
+                    setInitial(true);
+                    setMode("select");
+                    setOpen(false);
+                  }}
+                />
               </motion.div>
             )}
           </AnimatePresence>
