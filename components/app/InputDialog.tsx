@@ -135,13 +135,13 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                   <DialogDescription>連携するSNSを選択してください</DialogDescription>
                 </DialogHeader>
 
-                <div className="p-4 mb-4 h-64">
-                  <div className="space-y-6 items-center justify-center h-full">
+                <div className="h-64">
+                  <div className="md:grid gap-4 py-4 space-y-6 mb-4">
                     {/* x(twitter)連携 */}
                     <div className="flex flex-col items-center justify-center">
                       <Button
                         variant="outline"
-                        className="rounded-full py-6 text-lg px-16 w-3/5"
+                        className="rounded-full py-6 text-lg px-16 w-4/5"
                         disabled
                       >
                         <svg
@@ -163,7 +163,7 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                     <div className="flex items-center justify-center">
                       <Button
                         variant="outline"
-                        className="rounded-full py-6 text-lg px-16 w-3/5"
+                        className="rounded-full py-6 text-lg px-16 w-4/5"
                         disabled
                       >
                         <svg
@@ -189,7 +189,7 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                     <div className="flex items-center justify-center">
                       <Button
                         variant="outline"
-                        className="rounded-full py-6 text-lg px-16 w-3/5"
+                        className="rounded-full py-6 text-lg px-16 w-4/5"
                         onClick={() => setMode("yay-login")}
                       >
                         <Image src={`/img/yay.png`} width={24} height={24} alt="yay.image" />
@@ -216,9 +216,7 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
               >
                 <DialogHeader>
                   <DialogTitle className="text-lg font-bold">アカウント追加</DialogTitle>
-                  <DialogDescription>
-                    新しいSNSアカウントの情報を入力してください。
-                  </DialogDescription>
+                  <DialogDescription>連携するsnsにログインしてください</DialogDescription>
                 </DialogHeader>
 
                 {/* 入力画面 */}
