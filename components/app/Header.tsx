@@ -109,7 +109,7 @@ export default function Header({ diaryData }) {
 
           {/* モバイル用ハンバーガーアイコン */}
           <div className="md:hidden">
-            <button onClick={() => setMenuOpen(true)} className="text-white focus:outline-none">
+            <button onClick={() => setMenuOpen(true)} className="text-black focus:outline-none">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

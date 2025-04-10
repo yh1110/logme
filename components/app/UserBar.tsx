@@ -21,14 +21,6 @@ const UserBar = () => {
       id: 2,
       user_name: "user2",
     },
-    {
-      id: 3,
-      user_name: "user3",
-    },
-    {
-      id: 4,
-      user_name: "user4",
-    },
   ];
 
   //データフェッチ
