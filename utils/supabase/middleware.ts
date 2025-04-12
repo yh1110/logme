@@ -33,7 +33,8 @@ export async function updateSession(request: NextRequest) {
 
   // console.log(user?.id);
 
-  const isAuth = !!user;
+  // const isAuth = !!user;
+  const isAuth = true; //TODO:一時的に認証済みとする
 
   console.log("isAuth", isAuth);
 
