@@ -20,20 +20,20 @@ interface postContent {
 interface postItems {
   id: number;
   postContent: postContent;
-  createdAt?: number;
+  createdAt?: string | null;
 }
 
-export async function getPost() {
+export async function getPost(client: Client) {
   //#TODO DBから取得
-  const email: string = process.env.EMAIL ?? "";
-  const password: string = process.env.PASSWORD ?? "";
+  // const email: string = process.env.EMAIL ?? "";
+  // const password: string = process.env.PASSWORD ?? "";
 
-  const client = new Client({ saveCookie: false });
+  // const client = new Client({ saveCookie: false });
 
-  await client.login({
-    email,
-    password,
-  });
+  // await client.login({
+  //   email,
+  //   password,
+  // });
 
   //#######
   const postCount: number = (await client.getMyPosts({ number: 1 })).posts[0].user?.postsCount ?? 0;
@@ -41,9 +41,8 @@ export async function getPost() {
   // console.log((await client.getPost({ postId: 383481368 })).post);
 
   const number: number | undefined = 20;
-  const myPostsTexts: string[] = [];
+  const myPostsTexts: postItems[] = [];
   let fromPostId: number | undefined; //取得する際に基準となる投稿ID
-  let postItems: postItems;
   for (let i = 0; i < Math.ceil(postCount / number); i++) {
     const myPosts = await client.getMyPosts({
       includeGroupPost: true,
@@ -64,7 +63,7 @@ export async function getPost() {
             attachment: [],
             video: [],
           },
-          createdAt: post.createdAt ?? 0,
+          createdAt: post.createdAt ? new Date(post.createdAt * 1000).toLocaleString() : null,
         };
 
         if ("attachment" in post) {
@@ -139,7 +138,7 @@ export async function getPost() {
           postItems.postContent.video = videos;
         }
 
-        return JSON.stringify(postItems);
+        return postItems;
       } else {
         return "";
       }
@@ -150,10 +149,4 @@ export async function getPost() {
   // //###############
   console.log(myPostsTexts); //debug
   return myPostsTexts;
-
-  //誰にブロックされているか確認
-  // const blockUserIds = await client.getBlockedUserIds();
-  // const blockUsersInfo = await client.getUsers({ userIds: blockUserIds });
-  // const info = blockUsersInfo.users.map((user) => user.nickname);
-  // console.log(info);
 }

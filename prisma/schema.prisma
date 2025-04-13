@@ -10,7 +10,7 @@ datasource db {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model posts {
-  post_id       String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id       String         @id
   samnail_id    String?        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   updated_at    DateTime?      @db.Timestamp(6)
   created_at    DateTime       @db.Timestamp(6)
@@ -32,7 +32,7 @@ model posts_samnail {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model sns_accounts {
   account_id    String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id       String          @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String
   sns_id        String?
   access_token  String?
   email         String?
@@ -45,7 +45,7 @@ model sns_accounts {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model users {
-  user_id      String         @id(map: "Users_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String         @id(map: "Users_pkey")
   created_at   DateTime       @db.Timestamp(6)
   updated_at   DateTime       @default(now()) @db.Timestamp(6)
   user_name    String?

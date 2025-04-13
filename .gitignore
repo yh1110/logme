@@ -44,3 +44,5 @@ next-env.d.ts
 memo.local.txt
 
 public/img
+
+utils/crypto.ts

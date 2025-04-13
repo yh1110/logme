@@ -14,7 +14,7 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useForm } from "react-hook-form";
-import { useActionState, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { addAccount } from "@/lib/actions/yay/addAccount";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,20 +32,30 @@ export function AccountDialog({ onSuccess }: { onSuccess: () => void }) {
     formState: { errors, isValid },
   } = useForm<FormData>({});
 
-  const [state, formAction, isPending] = useActionState(addAccount, null);
   const [isTransPending, startTransition] = useTransition();
+  const [showError, setShowError] = useState("");
 
   const onSubmit = (data: FormData) => {
-    startTransition(() => {
-      formAction(data);
-      if (!isPending && !isTransPending) {
-        onSuccess(); // 処理完了後にダイアログを閉じる
+    startTransition(async () => {
+      const result = await addAccount(data);
+
+      if (result.result === -1) {
+        setShowError(result.message);
+        return;
       }
+
+      onSuccess();
     });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="h-64">
+    <form onSubmit={handleSubmit(onSubmit)} className="h-72">
+      <div className="items-center justify-center flex flex-col space-y-4">
+        <span className="text-sm text-red-700" style={{ whiteSpace: "pre-wrap" }}>
+          {showError || null}
+        </span>
+      </div>
+
       <div className="md:grid gap-4 py-4 space-y-6 mb-4">
         {/* メールアドレス */}
         <div className="md:grid md:grid-cols-4 items-center gap-4">
@@ -81,9 +91,9 @@ export function AccountDialog({ onSuccess }: { onSuccess: () => void }) {
         <Button
           type="submit"
           className="my-4 sm:my-0 hover:bg-primary-buttonHover"
-          disabled={!isValid || isPending || isTransPending}
+          disabled={!isValid || isTransPending}
         >
-          {isPending || isTransPending ? "送信中..." : "追加する"}
+          {isTransPending ? "送信中..." : "追加する"}
         </Button>
         {/* </DialogClose> */}
       </DialogFooter>
@@ -97,9 +107,9 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
   const [initial, setInitial] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const variants = {
-    enter: { x: 150, opacity: 0 },
+    enter: { x: 180, opacity: 0 },
     center: { x: 0, opacity: 1 },
-    exit: { x: -150, opacity: 0 },
+    exit: { x: -180, opacity: 0 },
   };
   return (
     <>
@@ -130,7 +140,7 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                   animate={initial ? "center" : "center"}
                   exit={initial ? "exit" : "exit"}
                   variants={variants}
-                  transition={{ duration: 0.25 }}
+                  transition={{ duration: 0.24 }}
                   className="space-y-4"
                 >
                   <DialogHeader>
@@ -138,8 +148,8 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                     <DialogDescription>連携するSNSを選択してください</DialogDescription>
                   </DialogHeader>
 
-                  <div className="h-64">
-                    <div className="md:grid gap-4 py-4 space-y-6 mb-4">
+                  <div className="h-72">
+                    <div className="md:grid gap-4 py-6 space-y-8 h-full">
                       {/* x(twitter)連携 */}
                       <div className="flex flex-col items-center justify-center">
                         <Button
@@ -214,7 +224,7 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                   animate={initial ? "center" : "center"}
                   exit={initial ? "enter" : "enter"}
                   variants={variants}
-                  transition={{ duration: 0.25 }}
+                  transition={{ duration: 0.24 }}
                   className="space-y-4"
                 >
                   <DialogHeader>
@@ -237,6 +247,8 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
           </DialogContent>
         </DialogPortal>
       </Dialog>
+
+      {/* 成功ダイアログ */}
       {showSuccess && <SNSSuccessfullyLlinked open={showSuccess} setOpen={setShowSuccess} />}
     </>
   );
