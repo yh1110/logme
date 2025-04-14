@@ -30,6 +30,10 @@ interface postItems {
   createdAt?: string | null;
 }
 
+function timeout(ms: number): Promise<never> {
+  return new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms));
+}
+
 function toYmd(dateStr: string): string {
   const d = new Date(dateStr);
   const yyyy = d.getFullYear();
@@ -41,6 +45,11 @@ function toYmd(dateStr: string): string {
 export async function addAccount(formData: { email: string; password: string }) {
   try {
     const { email, password } = formData;
+
+    // バリデーションチェック
+    if (!email || !password) {
+      throw new Error("VALIDATION_FAILED");
+    }
 
     // supabaseからユーザーIDを取得
     const supabaseClient = await createClient();
@@ -66,24 +75,23 @@ export async function addAccount(formData: { email: string; password: string }) 
       };
     }
 
-    // const client = new Client({ saveCookie: false });
-    // // // ログイン
-    // try {
-    //   await Promise.race([client.login({ email, password }), timeout(5000)]);
-
-    // } catch (err: any) {
-    //   if (err.message === "timeout") {
-    //     throw new Error("TIMEOUT");
-    //   }
-    //   throw new Error("LOGIN_FAILED");
-    // }
+    const client = new Client({ saveCookie: false });
+    // // ログイン
+    try {
+      await Promise.race([client.login({ email, password }), timeout(5000)]);
+    } catch (err: any) {
+      if (err.message === "timeout") {
+        throw new Error("TIMEOUT");
+      }
+      throw new Error("LOGIN_FAILED");
+    }
 
     // 投稿の取得
     let posts: postItems[];
     const grouped: Record<string, postItems[]> = {};
     try {
-      // post = await getPost(client);
-      posts = await getPostForMock();
+      posts = await getPost(client);
+      // posts = await getPostForMock();
 
       // 取得した投稿を日付ごとにグループ化
       for (const post of posts) {
@@ -157,6 +165,8 @@ export async function addAccount(formData: { email: string; password: string }) 
         break;
       case "DB_FAILED":
         errorMessage = "DB登録に失敗しました";
+      case "VALIDATION_FAILED":
+        errorMessage = "メールアドレスとパスワードは必須です";
     }
 
     return {

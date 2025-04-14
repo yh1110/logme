@@ -19,6 +19,7 @@ import { addAccount } from "@/lib/actions/yay/addAccount";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { SNSSuccessfullyLlinked } from "./InfoDialog";
+import LoadingSpinner from "./Loading";
 
 // SNSアカウント連携
 export function AccountDialog({ onSuccess }: { onSuccess: () => void }) {
@@ -49,55 +50,59 @@ export function AccountDialog({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="h-72">
-      <div className="items-center justify-center flex flex-col space-y-4">
-        <span className="text-sm text-red-700" style={{ whiteSpace: "pre-wrap" }}>
-          {showError || null}
-        </span>
-      </div>
-
-      <div className="md:grid gap-4 py-4 space-y-6 mb-4">
-        {/* メールアドレス */}
-        <div className="md:grid md:grid-cols-4 items-center gap-4">
-          <Label htmlFor="name" className="md:text-right">
-            メールアドレス
-          </Label>
-          <Input
-            id="email"
-            className="col-span-3"
-            autoFocus={false}
-            {...register("email", { required: "emailは必須です" })}
-          />
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="h-72">
+        <div className="items-center justify-center flex flex-col space-y-4">
+          <span className="text-sm text-red-700" style={{ whiteSpace: "pre-wrap" }}>
+            {showError || null}
+          </span>
         </div>
 
-        {/* パスワード */}
-        <div className="md:grid md:grid-cols-4 items-center gap-4">
-          <Label htmlFor="username" className="md:text-right">
-            パスワード
-          </Label>
-          <Input
-            id="password"
-            className="col-span-3"
-            autoFocus={false}
-            type="password"
-            {...register("password", { required: "passwordは必須です" })}
-          />
-        </div>
-      </div>
+        <div className="md:grid gap-4 py-4 space-y-6 mb-4">
+          {/* メールアドレス */}
+          <div className="md:grid md:grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="md:text-right">
+              メールアドレス
+            </Label>
+            <Input
+              id="email"
+              className="col-span-3"
+              autoFocus={false}
+              {...register("email", { required: "emailは必須です" })}
+            />
+          </div>
 
-      <DialogFooter>
-        {/* Submit ボタン：フォーム送信 */}
-        {/* <DialogClose asChild> */}
-        <Button
-          type="submit"
-          className="my-4 sm:my-0 hover:bg-primary-buttonHover"
-          disabled={!isValid || isTransPending}
-        >
-          {isTransPending ? "送信中..." : "追加する"}
-        </Button>
-        {/* </DialogClose> */}
-      </DialogFooter>
-    </form>
+          {/* パスワード */}
+          <div className="md:grid md:grid-cols-4 items-center gap-4">
+            <Label htmlFor="username" className="md:text-right">
+              パスワード
+            </Label>
+            <Input
+              id="password"
+              className="col-span-3"
+              autoFocus={false}
+              type="password"
+              {...register("password", { required: "passwordは必須です" })}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          {/* Submit ボタン：フォーム送信 */}
+          {/* <DialogClose asChild> */}
+          <Button
+            type="submit"
+            className="my-4 sm:my-0 hover:bg-primary-buttonHover"
+            disabled={!isValid || isTransPending}
+          >
+            {isTransPending ? "送信中..." : "追加する"}
+          </Button>
+          {/* </DialogClose> */}
+        </DialogFooter>
+      </form>
+
+      {<LoadingSpinner open={isTransPending} />}
+    </>
   );
 }
 
@@ -137,8 +142,8 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
                 <motion.div
                   key="select"
                   initial={initial ? "center" : "exit"}
-                  animate={initial ? "center" : "center"}
-                  exit={initial ? "exit" : "exit"}
+                  animate="center"
+                  exit="exit"
                   variants={variants}
                   transition={{ duration: 0.24 }}
                   className="space-y-4"
@@ -220,9 +225,9 @@ export function SNSDialog({ open, setOpen }: { open: boolean; setOpen: (open: bo
               {mode === "yay-login" && (
                 <motion.div
                   key="yay-login"
-                  initial={initial ? "enter" : "enter"}
-                  animate={initial ? "center" : "center"}
-                  exit={initial ? "enter" : "enter"}
+                  initial="enter"
+                  animate="center"
+                  exit="enter"
                   variants={variants}
                   transition={{ duration: 0.24 }}
                   className="space-y-4"
