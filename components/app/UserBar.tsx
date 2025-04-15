@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { SNSDialog } from "./InputDialog";
-import Link from "next/link";
+import { getDefaultPost } from "@/lib/actions/supabase/getDefaultPost";
 
 type accountDataType = {
   account_id: string;
@@ -18,17 +18,6 @@ const UserBar = ({ accountData }: { accountData: accountDataType[] }) => {
     setOpen(true);
   };
 
-  const snsUser = [
-    {
-      id: 1,
-      user_name: "user1",
-    },
-    {
-      id: 2,
-      user_name: "user2",
-    },
-  ];
-
   //データフェッチ
   //#TODO ローディング中に他の表示させる
   return (
@@ -36,13 +25,12 @@ const UserBar = ({ accountData }: { accountData: accountDataType[] }) => {
       <ScrollArea>
         <div className="max-w-7xl mx-auto flex space-x-2 py-4">
           {accountData.map((account) => (
-            <div className="flex items-center" key={account.account_id}>
+            <form className="flex items-center" key={account.account_id} action={getDefaultPost}>
               <Button className=" rounded-full bg-gray-300 px-8">
-                <Link href={`/${account.account_id}/`}>
-                  <span className="text-xs text-muted-foreground">{account.sns_id ?? "user1"}</span>
-                </Link>
+                <span className="text-xs text-muted-foreground">{account.sns_id ?? "user1"}</span>
+                <input type="hidden" name="id" value={account.account_id} />
               </Button>
-            </div>
+            </form>
           ))}
 
           {/* ユーザー追加ボタン */}

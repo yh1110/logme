@@ -53,7 +53,7 @@ export default async function BlogLayout({ children }: { children: React.ReactNo
   return (
     <div className="min-h-screen bg-gray-100">
       <Header diaryData={diaryData} />
-      <UserBar {...accountData} />
+      <UserBar accountData={accountData} />
       <div className="max-w-7xl mx-auto px-4 py-6 md:flex flex-col md:flex-row gap-6  ">
         {/* サイドバー */}
         <div className="w-full md:w-1/3 bg-white rounded-lg shadow-sm hidden md:block">
