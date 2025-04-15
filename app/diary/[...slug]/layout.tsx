@@ -3,6 +3,8 @@ import Header from "@/components/app/Header";
 import { Samnail } from "@/components/app/Samnail";
 import UserBar from "@/components/app/UserBar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { createClient } from "@/utils/supabase/server";
+import { PrismaClient } from "@prisma/client";
 import React from "react";
 
 // ダミーデータ
@@ -31,10 +33,27 @@ const diaryData = {
 //セッションから現在連携しているSNSの情報を取得
 
 export default async function BlogLayout({ children }: { children: React.ReactNode }) {
+  // supabaseからユーザーIDを取得
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const prisma = new PrismaClient();
+  const accountData = await prisma.sns_accounts.findMany({
+    where: {
+      user_id: user?.id,
+    },
+    select: {
+      account_id: true,
+      sns_id: true,
+    },
+  });
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Header diaryData={diaryData} />
-      <UserBar />
+      <UserBar {...accountData} />
       <div className="max-w-7xl mx-auto px-4 py-6 md:flex flex-col md:flex-row gap-6  ">
         {/* サイドバー */}
         <div className="w-full md:w-1/3 bg-white rounded-lg shadow-sm hidden md:block">

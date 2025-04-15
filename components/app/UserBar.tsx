@@ -4,8 +4,14 @@ import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { SNSDialog } from "./InputDialog";
+import Link from "next/link";
 
-const UserBar = () => {
+type accountDataType = {
+  account_id: string;
+  sns_id: string | null;
+};
+
+const UserBar = ({ accountData }: { accountData: accountDataType[] }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -24,14 +30,17 @@ const UserBar = () => {
   ];
 
   //データフェッチ
+  //#TODO ローディング中に他の表示させる
   return (
     <nav className="border p-2">
       <ScrollArea>
         <div className="max-w-7xl mx-auto flex space-x-2 py-4">
-          {snsUser.map((user) => (
-            <div className="flex items-center" key={user.id}>
+          {accountData.map((account) => (
+            <div className="flex items-center" key={account.account_id}>
               <Button className=" rounded-full bg-gray-300 px-8">
-                <span className="text-xs text-muted-foreground">{user.user_name}</span>
+                <Link href={`/${account.account_id}/`}>
+                  <span className="text-xs text-muted-foreground">{account.sns_id ?? "user1"}</span>
+                </Link>
               </Button>
             </div>
           ))}
