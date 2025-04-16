@@ -58,7 +58,7 @@ export default function LoadingSpinner({ open }: { open: boolean }) {
               </svg>
             </div>
 
-            <p className="mt-36 text-muted-foreground">
+            <p className="mt-36 text-muted-foreground text-sm">
               アカウントを追加して投稿を取得しています
               <span className="dot-ellipsis" />
             </p>

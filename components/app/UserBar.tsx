@@ -24,7 +24,7 @@ const UserBar = ({ accountData }: { accountData: accountDataType[] }) => {
     <nav className="border p-2">
       <ScrollArea>
         <div className="max-w-7xl mx-auto flex space-x-2 py-4">
-          {accountData.map((account) => (
+          {accountData?.map((account) => (
             <form className="flex items-center" key={account.account_id} action={getDefaultPost}>
               <Button className=" rounded-full bg-gray-300 px-8">
                 <span className="text-xs text-muted-foreground">{account.sns_id ?? "user1"}</span>

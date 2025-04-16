@@ -13,23 +13,26 @@ export async function getDefaultPost(FormData: FormData) {
   } = await supabase.auth.getUser();
   const user_id = user?.id;
 
-  const hasId = await prisma.sns_accounts.count({
+  const correctedSnsAccount = await prisma.sns_accounts.findUnique({
     where: {
       account_id,
       user_id,
     },
+    select: {
+      sns_id: true,
+    },
   });
 
-  if (hasId > 0) {
+  if (correctedSnsAccount) {
     const defaultPost = await prisma.posts_samnail.findFirst({
       where: {
         account_id,
       },
       select: {
-        samnail_id: true,
+        samnail_slug: true,
       },
     });
 
-    redirect(`/diary/${account_id}/${defaultPost?.samnail_id}`);
+    redirect(`/diary/${correctedSnsAccount.sns_id}/${defaultPost?.samnail_slug}`);
   }
 }

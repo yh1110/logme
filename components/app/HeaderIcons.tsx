@@ -1,7 +1,8 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 
-async function HeaderIcons() {
+export default function HeaderIcons() {
   return (
     <div className="flex items-center space-x-4">
       <div className="text-white font-bold text-2xl">
@@ -10,5 +11,3 @@ async function HeaderIcons() {
     </div>
   );
 }
-
-export default HeaderIcons;

@@ -1,10 +1,10 @@
 "use server";
 import { Client } from "yay.js";
 import { getPost } from "./getPost";
-import { getPostForMock } from "./getPostForMock";
 import { PrismaClient } from "@prisma/client";
 import { createClient } from "@/utils/supabase/server";
 import { encrypt } from "@/utils/crypto";
+import { nanoid } from "nanoid";
 
 const prisma = new PrismaClient();
 
@@ -42,6 +42,22 @@ function toYmd(dateStr: string): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+async function generateUniqueSlug(): Promise<string> {
+  let slug: string;
+  let exists: boolean;
+
+  do {
+    slug = nanoid(10); // 10〜12文字推奨（Qiitaっぽく）
+    const existing = await prisma.posts_samnail.findUnique({
+      where: { samnail_slug: slug },
+      select: { samnail_id: true },
+    });
+    exists = !!existing;
+  } while (exists);
+
+  return slug;
+}
+
 export async function addAccount(formData: { email: string; password: string }) {
   try {
     const { email, password } = formData;
@@ -76,15 +92,18 @@ export async function addAccount(formData: { email: string; password: string }) 
     }
 
     const client = new Client({ saveCookie: false });
-    // // ログイン
+    let loginData;
+    // yayログイン userId取得
     try {
-      await Promise.race([client.login({ email, password }), timeout(5000)]);
+      loginData = await Promise.race([client.login({ email, password }), timeout(5000)]);
     } catch (err: any) {
       if (err.message === "timeout") {
         throw new Error("TIMEOUT");
       }
       throw new Error("LOGIN_FAILED");
     }
+
+    console.log("loginData", loginData);
 
     // 投稿の取得
     let posts: postItems[];
@@ -113,6 +132,7 @@ export async function addAccount(formData: { email: string; password: string }) 
       const snsAccount = await prisma.sns_accounts.create({
         data: {
           user_id: userId ?? "",
+          sns_id: String(loginData.userId),
           email: formData.email,
           password: encryptedPassword,
           created_at: new Date(), // Add the required created_at field
@@ -120,12 +140,15 @@ export async function addAccount(formData: { email: string; password: string }) 
       });
 
       for (const [date, postList] of Object.entries(grouped)) {
+        // ユニークなスラグを生成
+        const uniqueSlug = await generateUniqueSlug();
         //post_samnailテーブル更新
         const postsSamnail = await prisma.posts_samnail.create({
           data: {
             account_id: snsAccount.account_id,
             samnail_name: date,
             created_at: new Date(), // 現在時刻
+            samnail_slug: uniqueSlug, // Add a unique slug
           },
         });
 

@@ -5,8 +5,9 @@ import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/comp
 import { ScrollArea } from "../ui/scroll-area";
 import { MobileSamnail } from "./Samnail";
 import { SNSDialog } from "./InputDialog";
+import HeaderIcons from "./HeaderIcons";
 
-function HeaderClient({ diaryData, children }) {
+function HeaderClient({ diaryData }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [samnailOpen, setSamnailOpen] = useState(false);
   const [snsOpen, setSnsOpen] = useState(false);
@@ -26,7 +27,7 @@ function HeaderClient({ diaryData, children }) {
         </div>
 
         {/* ロゴ  */}
-        {children}
+        <HeaderIcons />
 
         {/* PC用ナビゲーション */}
         <div className="hidden md:flex space-x-6 items-center text-zinc-700">

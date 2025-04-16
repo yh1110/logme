@@ -67,7 +67,7 @@ export default async function BlogLayout({ children }: { children: React.ReactNo
         </div>
 
         {/* メインコンテンツ */}
-        <main className="w-full md:w-2/3 bg-white rounded-lg shadow-sm p-6">{children}</main>
+        {children}
       </div>
     </div>
   );

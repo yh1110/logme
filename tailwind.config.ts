@@ -18,6 +18,7 @@ export default {
           header: "#FFBB38",
           button: "#FFB84C",
           buttonHover: "#FFA726",
+          emptyState: "#ffd08c",
           foreground: "hsl(var(--primary-foreground))",
         },
         card: {
