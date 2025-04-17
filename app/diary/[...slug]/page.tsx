@@ -73,7 +73,7 @@ export default async function DiaryPage({ params }: { params: Promise<{ slug: st
           </div>
           <div className="prose max-w-none">
             {diaryData?.map((post) => {
-              console.log(post.post_contents);
+              // console.log(post.post_contents);
               return (
                 <p className="text-gray-700 leading-relaxed" key={post.post_id}>
                   {typeof post.post_contents === "string"

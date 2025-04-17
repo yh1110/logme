@@ -147,6 +147,6 @@ export async function getPost(client: Client) {
     myPostsTexts.push(...textsDatas); //
   }
   // //###############
-  console.log(myPostsTexts); //debug
+  // console.log(myPostsTexts); //debug
   return myPostsTexts;
 }

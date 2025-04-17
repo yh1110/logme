@@ -103,7 +103,7 @@ export async function addAccount(formData: { email: string; password: string }) 
       throw new Error("LOGIN_FAILED");
     }
 
-    console.log("loginData", loginData);
+    // console.log("loginData", loginData);
 
     // 投稿の取得
     let posts: postItems[];
