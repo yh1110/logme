@@ -1,11 +1,10 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
-import { redirect } from "next/navigation";
 
-export async function getDefaultPost(FormData: FormData) {
+export async function getDefaultPost(accountId: string) {
   const prisma = new PrismaClient();
-  const account_id = FormData.get("id") as string;
+  const account_id = accountId as string;
 
   const supabase = await createClient();
   const {
@@ -33,6 +32,6 @@ export async function getDefaultPost(FormData: FormData) {
       },
     });
 
-    redirect(`/diary/${correctedSnsAccount.sns_id}/${defaultPost?.samnail_slug}`);
+    return `/diary/${correctedSnsAccount.sns_id}/${defaultPost?.samnail_slug}`;
   }
 }
