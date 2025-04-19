@@ -2,21 +2,26 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"; // shadcn/ui の Sheet コンポーネント群
-import { ScrollArea } from "../ui/scroll-area";
-import { MobileSamnail } from "./Samnail";
 import { SNSDialog } from "./InputDialog";
 import HeaderIcons from "./HeaderIcons";
+import { handleOpenSamnailStore } from "@/lib/store/handleSamnail";
 
 function HeaderClient({ diaryData }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [samnailOpen, setSamnailOpen] = useState(false);
   const [snsOpen, setSnsOpen] = useState(false);
+  const open = () => handleOpenSamnailStore.setState({ isOpen: true });
+  console.log(menuOpen);
+
   return (
     <>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* 日記ハンバーガーアイコン */}
         <div className="md:hidden">
-          <button onClick={() => setSamnailOpen(true)}>
+          <button
+            onClick={() => {
+              open();
+            }}
+          >
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 20 20">
               <path
                 fill="currentColor"
@@ -215,29 +220,19 @@ function HeaderClient({ diaryData }) {
           </nav>
         </SheetContent>
       </Sheet>
-      {/* 日記サムネイルドロワー */}
-      <Sheet open={samnailOpen} onOpenChange={setSamnailOpen}>
-        {/* ドロワーを開くトリガー */}
-        {/* SheetContent でドロワーの内容を定義。side="right" で右側から表示 */}
-        <SheetContent
-          side="left"
-          className="w-1/2 p-4 bg-gray-50"
-          // 必要に応じて、下記のようなカスタムクラスでアニメーションやスタイルを調整できます
-          // e.g., transition, shadow, 背景色など
-        >
-          <ScrollArea className="h-full">
-            {Object.entries(diaryData).map(([month, entries]) => (
-              <div key={month} className="py-2">
-                <MobileSamnail month={month} entries={entries} />
-              </div>
-            ))}
-          </ScrollArea>
-
-          {/* 閉じるボタン。SheetClose を使うとクリックで自動的にドロワーが閉じられます */}
-        </SheetContent>
-      </Sheet>
       {/* SNS選択ダイアログ */}
       <SNSDialog open={snsOpen} setOpen={setSnsOpen} />
+
+      {/* mock */}
+      {/* <Sheet open={isOpen} onOpenChange={(val) => (val ? open() : close())}>
+        <SheetContent side="left" className="w-1/2 p-4 bg-gray-50">
+          <SheetHeader>
+            <SheetTitle className="text-md font-bold text-primary-header">SNS選択</SheetTitle>
+          </SheetHeader>
+
+          <nav className="mt-4 space-y-8 font-bold">aaa</nav>
+        </SheetContent>
+      </Sheet> */}
     </>
   );
 }

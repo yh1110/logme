@@ -1,10 +1,8 @@
 // app/blog/layout.tsx
 import Header from "@/components/app/Header";
-import { Samnail } from "@/components/app/Samnail";
+import { Samnail } from "@/components/app/SamnailClient";
 import UserBar from "@/components/app/UserBar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { createClient } from "@/utils/supabase/server";
-import { PrismaClient } from "@prisma/client";
 import React from "react";
 
 // ダミーデータ
@@ -50,7 +48,6 @@ export default async function BlogLayout({ children }: { children: React.ReactNo
   //   },
   // });
 
-  let accountData;
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-[#FFB84C] p-4">
@@ -58,21 +55,9 @@ export default async function BlogLayout({ children }: { children: React.ReactNo
       </header>
 
       <UserBar />
-      <div className="max-w-7xl mx-auto px-4 py-6 md:flex flex-col md:flex-row gap-6  ">
-        {/* サイドバー */}
-        <div className="w-full md:w-1/3 bg-white rounded-lg shadow-sm hidden md:block">
-          <ScrollArea className="h-[calc(100vh-8rem)]">
-            {Object.entries(diaryData).map(([month, entries]) => (
-              <div key={month} className="p-4">
-                <Samnail month={month} entries={entries} />
-              </div>
-            ))}
-          </ScrollArea>
-        </div>
 
-        {/* メインコンテンツ */}
-        {children}
-      </div>
+      {/* メインコンテンツ */}
+      {children}
     </div>
   );
 }
