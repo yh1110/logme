@@ -1,6 +1,7 @@
 "use server";
 import { MobileSamnail, Samnail } from "@/components/app/Samnail";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getServerCookie } from "@/utils/getServerCookie";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -14,7 +15,6 @@ import { PrismaClient } from "@prisma/client";
 export default async function DiaryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [sns_id, samnai_slug] = slug;
-  console.log(slug);
   //データフェッチ
   //サムネイルIDをもとにデータを表示
 
@@ -23,67 +23,73 @@ export default async function DiaryPage({ params }: { params: Promise<{ slug: st
   let diaryData: any[] = [];
   let samnail;
   let selectedSamnail;
-  if (sns_id && samnai_slug) {
+  let snsId;
+  if (samnai_slug) {
     //ユーザー検証
 
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    const user_id = user?.id;
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const user_id = user?.id;
 
-    const account = await prisma.sns_accounts.findFirst({
-      where: {
-        sns_id,
-      },
-      select: {
-        account_id: true,
-      },
-    });
+      const cookieSnsId = (await getServerCookie("sns_id")) as string; //クッキーから値を取得
 
-    if (account) {
+      // ログイン中のユーザーのアカウントか確認
       const snsAccount = await prisma.sns_accounts.findUnique({
         where: {
-          account_id: account?.account_id,
+          sns_id: cookieSnsId,
           user_id,
         },
       });
 
+      // console.log("snsAccount", snsAccount);
+
       if (snsAccount) {
+        snsId = snsAccount.sns_id || sns_id;
+
         selectedSamnail = await prisma.posts_samnail.findFirst({
           where: {
-            account_id: account?.account_id,
-            samnail_slug: samnai_slug,
+            account_id: snsAccount?.account_id,
+            samnail_slug: samnai_slug, //NOTE: samnail_idのslug
           },
         });
 
         samnail = await prisma.posts_samnail.findMany({
           where: {
-            account_id: account?.account_id,
+            account_id: snsAccount?.account_id,
           },
           orderBy: {
-            samnail_date: "desc", // または "asc"
+            samnail_date: "desc",
           },
         });
 
-        // console.log(samnail);
+        if (selectedSamnail) {
+          diaryData = await prisma.posts.findMany({
+            where: {
+              samnail_id: selectedSamnail?.samnail_id,
+            },
+          });
+        }
 
-        diaryData = await prisma.posts.findMany({
-          where: {
-            samnail_id: selectedSamnail?.samnail_id,
-          },
-        });
+        // console.log(data);
       }
+    } catch (error) {
+      console.log("getDefaultPost error", error);
+      return `/error`;
     }
   }
+
+  // console.log(snsId);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 md:flex flex-col md:flex-row gap-6  ">
       <div className="w-full md:w-1/3 bg-white rounded-lg shadow-sm hidden md:block">
         {/* サイドバー */}
         <ScrollArea className="h-[calc(100vh-8rem)]">
-          <Samnail samnailData={samnail} />
-          <MobileSamnail samnailData={samnail} />
+          <Samnail samnailData={samnail} userId={snsId} />
+          <MobileSamnail samnailData={samnail} userId={snsId} />
         </ScrollArea>
       </div>
       <main className="w-full md:w-2/3 bg-white rounded-lg shadow-sm p-6">
@@ -93,11 +99,14 @@ export default async function DiaryPage({ params }: { params: Promise<{ slug: st
               <h1 className="text-2xl font-bold text-gray-900">{selectedSamnail?.samnail_name}</h1>
               <p className="text-gray-500">{selectedSamnail?.samnail_name}</p>
             </div>
-            <div className="prose max-w-none">
+            <div className="prose max-w-none space-y-8">
               {diaryData?.map((post) => {
-                // console.log(post.post_contents);
+                // console.log(JSON.parse(post.post_contents).text);
                 return (
-                  <p className="text-gray-700 leading-relaxed" key={post.post_id}>
+                  <p
+                    className="text-gray-700 leading-relaxed whitespace-pre-line border-b pb-8"
+                    key={post.post_id}
+                  >
                     {typeof post.post_contents === "string"
                       ? JSON.parse(post.post_contents).text
                       : ""}

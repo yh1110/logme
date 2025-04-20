@@ -4,19 +4,23 @@ import Link from "next/link";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"; // shadcn/ui の Sheet コンポーネント群
 import { SNSDialog } from "./InputDialog";
 import HeaderIcons from "./HeaderIcons";
+// import { MobileSamnail } from "./SamnailClient";
+// import { MobileSamnail } from "./SamnailClient";
 import { handleOpenSamnailStore } from "@/lib/store/handleSamnail";
 
-function HeaderClient({ diaryData }) {
+function HeaderClient() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [snsOpen, setSnsOpen] = useState(false);
-  const open = () => handleOpenSamnailStore.setState({ isOpen: true });
-  console.log(menuOpen);
+  const open = handleOpenSamnailStore((state) => state.open);
+
+  // console.log(params);
 
   return (
     <>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* 日記ハンバーガーアイコン */}
         <div className="md:hidden">
+          {/* <button onClick={handleClickSamnail}> */}
           <button
             onClick={() => {
               open();
@@ -222,17 +226,6 @@ function HeaderClient({ diaryData }) {
       </Sheet>
       {/* SNS選択ダイアログ */}
       <SNSDialog open={snsOpen} setOpen={setSnsOpen} />
-
-      {/* mock */}
-      {/* <Sheet open={isOpen} onOpenChange={(val) => (val ? open() : close())}>
-        <SheetContent side="left" className="w-1/2 p-4 bg-gray-50">
-          <SheetHeader>
-            <SheetTitle className="text-md font-bold text-primary-header">SNS選択</SheetTitle>
-          </SheetHeader>
-
-          <nav className="mt-4 space-y-8 font-bold">aaa</nav>
-        </SheetContent>
-      </Sheet> */}
     </>
   );
 }

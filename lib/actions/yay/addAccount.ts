@@ -5,6 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import { createClient } from "@/utils/supabase/server";
 import { encrypt } from "@/utils/crypto";
 import { nanoid } from "nanoid";
+import { setSnsId } from "@/utils/setCookies";
 
 const prisma = new PrismaClient();
 
@@ -108,6 +109,7 @@ export async function addAccount(formData: { email: string; password: string }) 
     // 投稿の取得
     let posts: postItems[];
     const grouped: Record<string, postItems[]> = {};
+    let snsAccount;
     try {
       posts = await getPost(client);
       // posts = await getPostForMock();
@@ -129,7 +131,7 @@ export async function addAccount(formData: { email: string; password: string }) 
     const encryptedPassword = encrypt(formData.password);
     try {
       //sns_accountsテーブル更新
-      const snsAccount = await prisma.sns_accounts.create({
+      snsAccount = await prisma.sns_accounts.create({
         data: {
           user_id: userId ?? "",
           sns_id: String(loginData.userId),
@@ -147,7 +149,9 @@ export async function addAccount(formData: { email: string; password: string }) 
           data: {
             account_id: snsAccount.account_id,
             samnail_name: date,
-            samnail_date: date,
+            samnail_date: new Date(date),
+            samnail_month: new Date(date).getMonth(),
+            samnail_year: new Date(date).getFullYear(),
             created_at: new Date(), // 現在時刻
             samnail_slug: uniqueSlug, // Add a unique slug
           },
@@ -168,6 +172,7 @@ export async function addAccount(formData: { email: string; password: string }) 
     }
 
     // 処理結果返却
+    setSnsId(snsAccount.sns_id);
     return {
       result: 0,
       message: "アカウント連携に成功しました",

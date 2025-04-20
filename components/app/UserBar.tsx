@@ -1,3 +1,4 @@
+import { getServerCookie } from "@/utils/getServerCookie";
 import UserBarClient from "./UserBarClient";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
@@ -18,9 +19,12 @@ const UserBar = async () => {
       sns_id: true,
     },
   });
+  const cookieSnsId = await getServerCookie("sns_id");
+  // console.log("cookieSnsId", cookieSnsId);
+
   return (
     <nav className="border p-2">
-      <UserBarClient accountData={accountData} />
+      <UserBarClient accountData={accountData} cookieSnsId={cookieSnsId ?? ""} />
     </nav>
   );
 };

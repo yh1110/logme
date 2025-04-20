@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -16,6 +17,7 @@ export function SNSSuccessfullyLlinked({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const router = useRouter();
   return (
     <Dialog
       open={open}
@@ -88,6 +90,7 @@ export function SNSSuccessfullyLlinked({
               className="w-32"
               onClick={() => {
                 setOpen(false);
+                router.replace("/diary"); // ルートに遷移
               }}
             >
               閉じる

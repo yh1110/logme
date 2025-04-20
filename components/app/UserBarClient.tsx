@@ -12,7 +12,13 @@ type accountDataType = {
   sns_id: string | null;
 };
 
-const UserBarClient = ({ accountData }: { accountData: accountDataType[] }) => {
+const UserBarClient = ({
+  accountData,
+  cookieSnsId,
+}: {
+  accountData: accountDataType[];
+  cookieSnsId: string;
+}) => {
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
@@ -22,10 +28,10 @@ const UserBarClient = ({ accountData }: { accountData: accountDataType[] }) => {
     setOpen(true);
   };
 
-  const handleClickAccount = (accountId: string) => {
+  const handleClickAccount = (sns_id: string) => {
     startTransition(async () => {
-      const url = await getDefaultPost(accountId); // ← サーバーアクション
-      if (url) router.push(url); // ← クライアント遷移
+      const url = await getDefaultPost(sns_id); // サーバーアクション
+      if (url) router.push(url); // クライアント遷移
     });
   };
 
@@ -35,18 +41,30 @@ const UserBarClient = ({ accountData }: { accountData: accountDataType[] }) => {
     <>
       <ScrollArea>
         <div className="max-w-7xl mx-auto flex space-x-2 py-4">
-          {accountData?.map((account) => (
-            <div className="flex items-center" key={account.account_id}>
-              <Button
-                className=" rounded-full bg-gray-300 px-8"
-                onClick={() => {
-                  handleClickAccount(account.account_id);
-                }}
-              >
-                <span className="text-xs text-muted-foreground">{account.sns_id ?? "user1"}</span>
-              </Button>
-            </div>
-          ))}
+          {accountData?.map((account) => {
+            const isSelected = cookieSnsId === account.sns_id; // 選択中のアカウントかどうか
+            // console.log(cookieSnsId);
+
+            return (
+              <div className="flex items-center" key={account.sns_id}>
+                <Button
+                  className={`rounded-full bg-gray-200 px-8 ${
+                    isSelected ? " disabled:bg-black disabled:opacity-80 " : ""
+                  }`}
+                  onClick={() => {
+                    handleClickAccount(account.sns_id ?? ""); // SNSのアカウントIDを渡す
+                  }}
+                  disabled={isPending || isSelected}
+                >
+                  <span
+                    className={`text-xs text-muted-foreground ${isSelected ? "text-gray-100" : ""}`}
+                  >
+                    {account.sns_id ?? "user1"}
+                  </span>
+                </Button>
+              </div>
+            );
+          })}
 
           {/* ユーザー追加ボタン */}
           {/* モーダル出して入力させる */}

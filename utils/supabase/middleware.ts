@@ -31,12 +31,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // console.log(user?.id);
+  const isAuth = !!user;
 
-  // const isAuth = !!user;
-  const isAuth = true; //TODO:一時的に認証済みとする
-
-  console.log("isAuth", isAuth);
+  // console.log("isAuth", isAuth);
 
   if (
     request.nextUrl.pathname.startsWith("/signin") ||
@@ -59,6 +56,8 @@ export async function updateSession(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/signin";
       return NextResponse.redirect(url);
+
+      // 認証済み
     }
     return supabaseResponse;
   }

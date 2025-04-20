@@ -30,7 +30,7 @@ export function AccountDialog({ onSuccess }: { onSuccess: () => void }) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<FormData>({});
 
   const [isTransPending, startTransition] = useTransition();

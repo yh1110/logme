@@ -13,7 +13,7 @@ export async function googleSignin() {
     // #TODO エラー処理
     console.error("Error logging in:", error);
   } else {
-    console.log(data.url);
+    // console.log(data.url);
 
     redirect(data.url!);
   }

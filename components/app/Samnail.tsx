@@ -1,11 +1,11 @@
-import { MobileSamnailClient, SamnailClinet } from "./SamnailClient";
+import { MobileSamnailSheetClient, SamnailClinet } from "./SamnailClient";
 import { groupBy } from "lodash";
 
-type SamnailDataType = {
+export type SamnailDataType = {
   samnailData:
     | {
         samnail_year: number | null;
-        samnail_day: number | null;
+        samnail_month: number | null;
         account_id: string | null;
         updated_at: Date | null;
         created_at: Date;
@@ -15,34 +15,29 @@ type SamnailDataType = {
         samnail_date: Date | null;
       }[]
     | undefined;
+  userId?: string;
 };
 
-export function MobileSamnail({ samnailData }: SamnailDataType) {
+export async function MobileSamnail({ samnailData, userId }: SamnailDataType) {
   const grouped = groupBy(
     samnailData,
-    (e) => `${e.samnail_year}-${String(e.samnail_day).padStart(2, "0")}`
+    (e) => `${e.samnail_year}-${String(e.samnail_month).padStart(2, "0")}`
   );
 
-  return (
-    <div className="p-4">
-      {Object.entries(grouped).map(([month, entries]) => (
-        <MobileSamnailClient key={month} month={month} entries={entries} />
-      ))}
-    </div>
-  );
+  return <MobileSamnailSheetClient samnailData={grouped} userId={userId} />;
 }
 
-export async function Samnail({ samnailData }: SamnailDataType) {
+export async function Samnail({ samnailData, userId }: SamnailDataType) {
   //グループ化
   const grouped = groupBy(
     samnailData,
-    (e) => `${e.samnail_year}-${String(e.samnail_day).padStart(2, "0")}`
+    (e) => `${e.samnail_year}-${String(e.samnail_month).padStart(2, "0")}`
   );
 
   return (
     <div className="p-4">
       {Object.entries(grouped).map(([month, entries]) => (
-        <SamnailClinet key={month} month={month} entries={entries} />
+        <SamnailClinet key={month} month={month} entries={entries} userId={userId} />
       ))}
     </div>
   );

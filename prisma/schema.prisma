@@ -20,17 +20,17 @@ model posts {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model posts_samnail {
-  samnail_id   String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at   DateTime      @db.Timestamp(6)
-  account_id   String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  samnail_name String?
-  updated_at   DateTime?     @default(now()) @db.Timestamp(6)
-  samnail_slug String        @unique
-  samnail_date DateTime?     @db.Date
-  samnail_day  Int?          @db.SmallInt
-  samnail_year Int?
-  posts        posts[]
-  sns_accounts sns_accounts? @relation(fields: [account_id], references: [account_id], onDelete: Cascade)
+  samnail_id    String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at    DateTime      @db.Timestamp(6)
+  account_id    String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  samnail_name  String?
+  updated_at    DateTime?     @default(now()) @db.Timestamp(6)
+  samnail_slug  String        @unique
+  samnail_date  DateTime?     @db.Date
+  samnail_month Int?          @db.SmallInt
+  samnail_year  Int?
+  posts         posts[]
+  sns_accounts  sns_accounts? @relation(fields: [account_id], references: [account_id], onDelete: Cascade)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
