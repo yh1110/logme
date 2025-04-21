@@ -97,7 +97,9 @@ export async function addAccount(formData: { email: string; password: string }) 
     // yayログイン userId取得
     try {
       loginData = await Promise.race([client.login({ email, password }), timeout(5000)]);
+      console.log("loginData", loginData);
     } catch (err: any) {
+      console.log("loginData", loginData);
       if (err.message === "timeout") {
         throw new Error("TIMEOUT");
       }
