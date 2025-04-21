@@ -152,7 +152,7 @@ export async function addAccount(formData: { email: string; password: string }) 
             account_id: snsAccount.account_id,
             samnail_name: date,
             samnail_date: new Date(date),
-            samnail_month: new Date(date).getMonth(),
+            samnail_month: new Date(date).getMonth() + 1,
             samnail_year: new Date(date).getFullYear(),
             created_at: new Date(), // 現在時刻
             samnail_slug: uniqueSlug, // Add a unique slug

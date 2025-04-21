@@ -48,6 +48,9 @@ export async function getDefaultPost(sns_id: string, isSetCookie: boolean = true
       });
 
       return `/diary/${correctedSnsAccount.sns_id}/${defaultPost?.samnail_slug ?? ""}`;
+    } else {
+      // snsアカウントが見つからない場合、エラーページにリダイレクト
+      return `/diary`;
     }
   } catch (error) {
     console.log("getDefaultPost error", error);

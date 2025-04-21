@@ -1,8 +1,10 @@
 "use server";
 import { MobileSamnail, Samnail } from "@/components/app/Samnail";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getServerCookie } from "@/utils/getServerCookie";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 // Mock data for demonstration
 // const diaryData = {
@@ -23,59 +25,73 @@ export default async function DiaryPage({ params }: { params: Promise<{ slug: st
   let samnail;
   let selectedSamnail;
   let snsId;
-  if (samnai_slug) {
-    //ユーザー検証
+  //ユーザー検証
 
-    try {
-      const supabase = await createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      const user_id = user?.id;
+  const cookieSnsId = await getServerCookie("sns_id");
+  if (!sns_id || cookieSnsId !== sns_id) {
+    redirect("/diary");
+  }
 
-      // ログイン中のユーザーのアカウントか確認
-      const snsAccount = await prisma.sns_accounts.findUnique({
-        where: {
-          sns_id,
-          user_id,
-        },
-      });
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const user_id = user?.id;
 
-      // console.log("snsAccount", snsAccount);
+    // ログイン中のユーザーのアカウントか確認
+    const snsAccount = await prisma.sns_accounts.findUnique({
+      where: {
+        sns_id,
+        user_id,
+      },
+    });
 
-      if (snsAccount) {
-        snsId = snsAccount.sns_id || sns_id;
+    // console.log("snsAccount", snsAccount);
 
-        selectedSamnail = await prisma.posts_samnail.findFirst({
+    if (snsAccount) {
+      snsId = snsAccount.sns_id || sns_id;
+
+      if (samnai_slug) {
+        selectedSamnail = await prisma.posts_samnail.findUnique({
           where: {
             account_id: snsAccount?.account_id,
             samnail_slug: samnai_slug, //NOTE: samnail_idのslug
           },
         });
-
-        samnail = await prisma.posts_samnail.findMany({
+      } else {
+        selectedSamnail = await prisma.posts_samnail.findFirst({
           where: {
             account_id: snsAccount?.account_id,
           },
-          orderBy: {
-            samnail_date: "desc",
+        });
+      }
+
+      samnail = await prisma.posts_samnail.findMany({
+        where: {
+          account_id: snsAccount?.account_id,
+        },
+        orderBy: {
+          samnail_date: "desc",
+        },
+      });
+
+      if (selectedSamnail) {
+        diaryData = await prisma.posts.findMany({
+          where: {
+            samnail_id: selectedSamnail?.samnail_id,
           },
         });
-
-        if (selectedSamnail) {
-          diaryData = await prisma.posts.findMany({
-            where: {
-              samnail_id: selectedSamnail?.samnail_id,
-            },
-          });
-        }
-
-        // console.log(data);
       }
-    } catch (error) {
-      console.log("getDefaultPost error", error);
-      return `/error`;
+
+      // console.log(data);
+    } else {
+      // アカウントが見つからない場合の処理
+      redirect("/diary");
     }
+  } catch (error) {
+    console.log("getDefaultPost error", error);
+    redirect("/error");
   }
 
   // console.log(snsId);

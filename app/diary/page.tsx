@@ -10,7 +10,9 @@ export default async function DiaryPage() {
   const cookieSnsId = await getServerCookie("sns_id");
   if (cookieSnsId) {
     const redirectUrl = await getDefaultPost(cookieSnsId, false); // サーバーアクションを呼び出す
-    redirect(redirectUrl!); // クライアント遷移
+    if (redirectUrl !== "/diary") {
+      redirect(redirectUrl!); // 日記ページ遷移
+    }
   }
   // console.log("cookieSnsId");
   // console.log("cookieSnsId", cookieSnsId);
