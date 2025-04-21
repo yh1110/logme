@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 export default async function DiaryPage() {
   const cookieSnsId = await getServerCookie("sns_id");
   if (cookieSnsId) {
-    const redirectUrl = await getDefaultPost(cookieSnsId); // サーバーアクションを呼び出す
+    const redirectUrl = await getDefaultPost(cookieSnsId, false); // サーバーアクションを呼び出す
     redirect(redirectUrl!); // クライアント遷移
   }
   // console.log("cookieSnsId");

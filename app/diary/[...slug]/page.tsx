@@ -1,7 +1,6 @@
 "use server";
 import { MobileSamnail, Samnail } from "@/components/app/Samnail";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getServerCookie } from "@/utils/getServerCookie";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -34,12 +33,10 @@ export default async function DiaryPage({ params }: { params: Promise<{ slug: st
       } = await supabase.auth.getUser();
       const user_id = user?.id;
 
-      const cookieSnsId = (await getServerCookie("sns_id")) as string; //クッキーから値を取得
-
       // ログイン中のユーザーのアカウントか確認
       const snsAccount = await prisma.sns_accounts.findUnique({
         where: {
-          sns_id: cookieSnsId,
+          sns_id,
           user_id,
         },
       });

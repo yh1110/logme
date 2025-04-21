@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import { createClient } from "@/utils/supabase/server";
 import { encrypt } from "@/utils/crypto";
 import { nanoid } from "nanoid";
-import { setSnsId } from "@/utils/setCookies";
+import { cookies } from "next/headers";
 
 const prisma = new PrismaClient();
 
@@ -97,7 +97,6 @@ export async function addAccount(formData: { email: string; password: string }) 
     // yayログイン userId取得
     try {
       loginData = await Promise.race([client.login({ email, password }), timeout(5000)]);
-      console.log("loginData", loginData);
     } catch (err: any) {
       console.log("loginData", loginData);
       console.log("err", err);
@@ -175,7 +174,13 @@ export async function addAccount(formData: { email: string; password: string }) 
     }
 
     // 処理結果返却
-    setSnsId(snsAccount.sns_id);
+    // setSnsId(snsAccount.sns_id);
+    (await cookies()).set("sns_id", snsAccount.sns_id, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365 * 10,
+      httpOnly: true,
+      sameSite: "lax",
+    });
     return {
       result: 0,
       message: "アカウント連携に成功しました",

@@ -1,9 +1,10 @@
 "use server";
-import { setSnsId } from "@/utils/setCookies";
+// import { setSnsId } from "@/utils/setCookies";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
+import { cookies } from "next/headers";
 
-export async function getDefaultPost(sns_id: string) {
+export async function getDefaultPost(sns_id: string, isSetCookie: boolean = true) {
   try {
     const prisma = new PrismaClient();
     if (!sns_id) {
@@ -28,7 +29,15 @@ export async function getDefaultPost(sns_id: string) {
 
     // snsアカウントがログインユーザーのものであるか確認
     if (correctedSnsAccount) {
-      setSnsId(correctedSnsAccount.sns_id);
+      // setSnsId(correctedSnsAccount.sns_id);
+      if (isSetCookie) {
+        (await cookies()).set("sns_id", correctedSnsAccount.sns_id, {
+          path: "/",
+          maxAge: 60 * 60 * 24 * 365 * 10,
+          httpOnly: true,
+          sameSite: "lax",
+        });
+      }
       const defaultPost = await prisma.posts_samnail.findFirst({
         where: {
           account_id: correctedSnsAccount.account_id,
