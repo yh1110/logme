@@ -100,6 +100,7 @@ export async function addAccount(formData: { email: string; password: string }) 
       console.log("loginData", loginData);
     } catch (err: any) {
       console.log("loginData", loginData);
+      console.log("err", err);
       if (err.message === "timeout") {
         throw new Error("TIMEOUT");
       }
