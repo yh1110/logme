@@ -57,7 +57,7 @@ const UserBarClient = ({
                   disabled={isPending || isSelected}
                 >
                   <span
-                    className={`text-xs text-muted-foreground ${isSelected ? "text-gray-100" : ""}`}
+                    className={`text-xs  ${isSelected ? "text-gray-100" : "text-muted-foreground"}`}
                   >
                     {account.sns_id ?? "user1"}
                   </span>
