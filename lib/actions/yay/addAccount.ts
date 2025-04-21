@@ -92,7 +92,7 @@ export async function addAccount(formData: { email: string; password: string }) 
       };
     }
 
-    const client = new Client({ saveCookie: false, debugMode: false });
+    const client = new Client({ saveCookie: false, debugMode: false, disableLog: true });
     let loginData;
     // yayログイン userId取得
     try {
