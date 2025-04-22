@@ -165,7 +165,7 @@ function HeaderClient() {
             </SheetClose>
 
             {/* SNS選択 */}
-            <SheetClose asChild>
+            <SheetClose asChild autoFocus={false}>
               <button className="flex space-x-2 items-center" onClick={() => setSnsOpen(true)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
