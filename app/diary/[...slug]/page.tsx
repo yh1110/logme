@@ -1,6 +1,7 @@
 "use server";
 import { MobileSamnail, Samnail } from "@/components/app/Samnail";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { posts_samnailType, postsType } from "@/types/prisma";
 import { getServerCookie } from "@/utils/getServerCookie";
 import { createClient } from "@/utils/supabase/server";
 import { PrismaClient } from "@prisma/client";
@@ -21,10 +22,10 @@ export default async function DiaryPage({ params }: { params: Promise<{ slug: st
 
   const prisma = new PrismaClient();
 
-  let diaryData: any[] = [];
-  let samnail;
-  let selectedSamnail;
-  let snsId;
+  let diaryData: postsType[] | null = [];
+  let samnail: posts_samnailType[] | null;
+  let selectedSamnail: posts_samnailType | null = null;
+  let snsId: string;
   //ユーザー検証
 
   const cookieSnsId = await getServerCookie("sns_id");

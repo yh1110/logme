@@ -1,11 +1,12 @@
 "use server";
-import { Client } from "yay.js";
+import { Client, LoginUserResponse } from "yay.js";
 import { getPost } from "./getPost";
 import { PrismaClient } from "@prisma/client";
 import { createClient } from "@/utils/supabase/server";
 import { encrypt } from "@/utils/crypto";
 import { nanoid } from "nanoid";
 import { cookies } from "next/headers";
+import { sns_accountsType } from "@/types/prisma";
 
 const prisma = new PrismaClient();
 
@@ -93,14 +94,14 @@ export async function addAccount(formData: { email: string; password: string }) 
     }
 
     const client = new Client({ saveCookie: false, debugMode: false, disableLog: true });
-    let loginData;
+    let loginData: LoginUserResponse | null = null;
     // yayログイン userId取得
     try {
       loginData = await Promise.race([client.login({ email, password }), timeout(5000)]);
-    } catch (err: any) {
-      console.log("loginData", loginData);
-      console.log("err", err);
-      if (err.message === "timeout") {
+    } catch (e: unknown) {
+      const error = e as Error;
+      console.log("err", error);
+      if (error.message === "timeout") {
         throw new Error("TIMEOUT");
       }
       throw new Error("LOGIN_FAILED");
@@ -111,7 +112,7 @@ export async function addAccount(formData: { email: string; password: string }) 
     // 投稿の取得
     let posts: postItems[];
     const grouped: Record<string, postItems[]> = {};
-    let snsAccount;
+    let snsAccount: sns_accountsType | null = null;
     try {
       posts = await getPost(client);
       // posts = await getPostForMock();
@@ -122,10 +123,9 @@ export async function addAccount(formData: { email: string; password: string }) 
         if (!grouped[date]) grouped[date] = [];
         grouped[date].push(post);
       }
-    } catch (err: any) {
-      if (err.message === "timeout") {
-        throw new Error("TIMEOUT");
-      }
+    } catch (e: unknown) {
+      console.log("getPost error", e);
+
       throw new Error("POST_FETCH_FAILED");
     }
 
@@ -169,7 +169,8 @@ export async function addAccount(formData: { email: string; password: string }) 
           })),
         });
       }
-    } catch (err: any) {
+    } catch (e: unknown) {
+      console.log("DB error", e);
       throw new Error("DB_FAILED");
     }
 
@@ -185,8 +186,9 @@ export async function addAccount(formData: { email: string; password: string }) 
       result: 0,
       message: "アカウント連携に成功しました",
     };
-  } catch (error: any) {
-    console.error("Error adding account:", error);
+  } catch (e: unknown) {
+    console.error("Error adding account:", e);
+    const error = e as Error;
 
     let errorMessage = "アカウント連携に失敗しました。";
 

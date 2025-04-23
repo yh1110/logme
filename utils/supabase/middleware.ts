@@ -33,8 +33,6 @@ export async function updateSession(request: NextRequest) {
 
   const isAuth = !!user;
 
-  // console.log("isAuth", isAuth);
-
   if (
     request.nextUrl.pathname.startsWith("/signin") ||
     request.nextUrl.pathname.startsWith("/auth") ||
