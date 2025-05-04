@@ -33,6 +33,7 @@
     "react-hook-form": "^7.55.0",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-safe-area": "^0.6.0",
     "vaul": "^1.1.2",
     "yay.js": "^0.0.25",
     "zustand": "^5.0.3"
