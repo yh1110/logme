@@ -137,18 +137,13 @@ export default async function Home() {
             <p className="text-gray-600 text-base font-bold mb-2">SNS</p>
             <ul className="flex flex-col space-y-1">
               <li>
-                <Link href="/about" className="text-gray-600 text-sm">
+                <Link href="https://x.com/craft_plus_0401" className="text-gray-600 text-sm">
                   - X
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-gray-600 text-sm">
+                <Link href="https://yay.space/user/9985857" className="text-gray-600 text-sm">
                   - yay
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-gray-600 text-sm">
-                  - github
                 </Link>
               </li>
             </ul>
@@ -193,17 +188,17 @@ export default async function Home() {
             </ul>
           </div>
 
-          {/* 問い合わせ */}
+          {/* 開発者について */}
           <div className="">
             <p className="text-gray-600 text-base font-bold mb-2">開発者について</p>
             <ul className="flex flex-col space-y-1">
               <li>
-                <Link href="/about" className="text-gray-600 text-sm">
-                  - Gmail
+                <Link href="https://github.com/yh1110" className="text-gray-600 text-sm">
+                  - Github
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-gray-600 text-sm">
+                <Link href="https://x.com/craft_plus_0401" className="text-gray-600 text-sm">
                   - X
                 </Link>
               </li>
