@@ -99,9 +99,7 @@ for ISSUE_NUMBER in $ISSUE_NUMBERS; do
 
   # 変更がない場合はブランチを削除してスキップ
   if [[ -z $(git status --porcelain) ]]; then
-      echo "変更点はありません。ブランチを削除します。"
-      git checkout "$CURRENT_BRANCH"
-      git branch -D "$BRANCH_NAME"
+      echo "変更点はありません。"
       continue
   fi
 
@@ -120,10 +118,7 @@ for ISSUE_NUMBER in $ISSUE_NUMBERS; do
 
   SUMMARY=$(echo "$PROMPT_SUMMARY" | claude --print --dangerously-skip-permissions)
 
-  # リモートにプッシュ
-  git push -u origin "$BRANCH_NAME"
-
-  echo "Creating pull request..."
+  echo "PRを作成します."
   gh pr create \
       --title "Fix: $ISSUE_TITLE (#$ISSUE_NUMBER)" \
       --repo "$REPO" \
