@@ -89,6 +89,11 @@ for ISSUE_NUMBER in $ISSUE_NUMBERS; do
   head -n 20 /tmp/claude.patch
   echo ">>> (…以上先頭20行) <<<"
 
+  PATCH_CLEAN=$(sed -n '/^diff --git/,${p}' /tmp/claude.patch)
+
+  # 4) クリーンなパッチを適用
+  echo "$PATCH_CLEAN" | git apply --whitespace=fix -
+
     # 変更がない場合はブランチを削除してスキップ
     if [[ -z $(git status --porcelain) ]]; then
         echo "変更点はありません。ブランチを削除します。"
